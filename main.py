@@ -10,6 +10,7 @@ from utils import *
 def init(loadimage: bool = False):
     options = webdriver.ChromeOptions()
 
+    # images are not loaded by default because they would affect browser scroll
     if not loadimage:
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
@@ -22,10 +23,12 @@ def init(loadimage: bool = False):
     return driver
 
 
+# invoke this func from repl after login in
 def save(driver):
     pickle.dump(driver.get_cookies(), open("cookies.pkl", "wb"))
 
 
+# login with current cookie
 def login(driver):
     cookies = pickle.load(open("cookies.pkl", "rb"))
     for ck in cookies:
@@ -85,6 +88,7 @@ def exec_top(driver: webdriver.Chrome):
     print("Done")
 
 
+# quit Selenium
 def end(driver):
     driver.quit()
 
@@ -94,4 +98,4 @@ if __name__ == "__main__":
         driver = init()
         login(driver)
         exec_top(driver)
-        # end(driver)
+        end(driver)
