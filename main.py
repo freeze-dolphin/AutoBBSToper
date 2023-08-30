@@ -1,3 +1,4 @@
+import os
 import pickle
 import sys
 
@@ -5,6 +6,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from utils import *
+
+from xvfbwrapper import Xvfb
 
 
 def init(loadimage: bool = False):
@@ -79,6 +82,8 @@ def exec_top(driver: webdriver.Chrome):
 
                         # and then use the card
 
+                        perform_wait(driver)
+
                         ## driver.refresh()
 
                         exec_top(driver)
@@ -95,7 +100,19 @@ def end(driver):
 
 if __name__ == "__main__":
     if not bool(getattr(sys, "ps1", sys.flags.interactive)):
+        try:
+            dont_use_x = os.environ["BBSTOPER_NOT_USE_X"] == 1
+        except KeyError:
+            dont_use_x = False
+            pass
+
+        if dont_use_x:
+            vd = Xvfb()
+            vd.start()
+
         driver = init()
         login(driver)
         exec_top(driver)
         end(driver)
+        if dont_use_x:
+            vd.stop()
