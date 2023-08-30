@@ -2,6 +2,16 @@
 
 A Selenium script that top your server thread.
 
+## Usage
+
+```shell
+
+$ BBSTOPER_NOT_USE_X=1 python3 main.py # this will not use x, and thus you can run this script without a screen
+
+$ python3 -i main.py # run in interactive mode, useful for login
+
+```
+
 ## Preparation
 
 - Please install `Xvfb` to your system first:
