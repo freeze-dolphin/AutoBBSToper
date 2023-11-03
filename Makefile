@@ -1,6 +1,6 @@
 .PHONY: repl exec
 
-repl:
+interactive:
 	python3 -i main.py
 
 exec:

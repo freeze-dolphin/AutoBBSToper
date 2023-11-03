@@ -1,5 +1,3 @@
-<a href="https://develop.spacemacs.org"><img src="https://raw.githubusercontent.com/syl20bnr/spacemacs/develop/assets/spacemacs-badge.svg" align="right" alt="Made with Spacemacs" height="20"></a>
-
 # AutoBBSToper
 
 A Selenium script that top your server thread.
@@ -7,11 +5,11 @@ A Selenium script that top your server thread.
 ## Usage
 
 ```shell
+$ make exec # this will not use x, and thus you can run this script without a screen
+```
 
-$ BBSTOPER_NOT_USE_X=1 python3 main.py # this will not use x, and thus you can run this script without a screen
-
-$ python3 -i main.py # run in interactive mode, useful for login
-
+```shell
+$ make interactive # run in interactive mode, useful for obtain cookies
 ```
 
 ## Preparation
@@ -34,4 +32,5 @@ $ python3 -i main.py # run in interactive mode, useful for login
     $ pip install selenium
     ```
 
-- Download [`Chrome WebDriver`](https://chromedriver.storage.googleapis.com/index.html?path=114.0.5735.90/) and put the binary executable file under `/usr/bin/`:
+- Download [`Chrome WebDriver`](https://googlechromelabs.github.io/chrome-for-testing/#stable) and put the binary
+  executable file under `/usr/bin/`:

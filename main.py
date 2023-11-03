@@ -2,12 +2,9 @@ import os
 import pickle
 import sys
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+from xvfbwrapper import Xvfb
 
 from utils import *
-
-from xvfbwrapper import Xvfb
 
 
 def init(loadimage: bool = False):
@@ -15,20 +12,28 @@ def init(loadimage: bool = False):
 
     # images are not loaded by default because they would affect browser scroll
     if not loadimage:
+        # prefs = {}
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
     options.add_experimental_option("detach", True)
 
-    driver = webdriver.Chrome(options=options)
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
 
-    driver.get("https://www.mcbbs.net/thread-1391052-1-1.html")
-    driver.maximize_window()
-    return driver
+    if not loadimage:
+        options.add_argument(
+            "window-size=19200,10800")
+
+    tdriver = webdriver.Chrome(options=options)
+
+    tdriver.get("https://www.mcbbs.net/thread-1391052-1-1.html")
+    tdriver.maximize_window()
+    return tdriver
 
 
 # invoke this func from repl after login in
-def save(driver):
-    pickle.dump(driver.get_cookies(), open("cookies.pkl", "wb"))
+def save(tdriver):
+    pickle.dump(tdriver.get_cookies(), open("cookies.pkl", "wb"))
 
 
 # login with current cookie
@@ -42,33 +47,33 @@ def login(driver):
     driver.refresh()
 
 
-def exec_top(driver: webdriver.Chrome):
+def exec_top(tdriver: webdriver.Chrome):
     print("Preparing for click...")
 
-    act = webdriver.ActionChains
-    for e in driver.find_elements(By.CLASS_NAME, "showmenu"):
-        if e.text == "使用道具":
-            driver.execute_script("arguments[0].scrollIntoView();", e)
+    for e_outter in tdriver.find_elements(By.CLASS_NAME, "showmenu"):
+        if e_outter.text == "使用道具":
+            # tdriver.execute_script("arguments[0].scrollIntoView();", e_outter)
+            tdriver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 
-            print("Hovering over element: " + e.text)
+            print("Hovering over element: " + e_outter.text)
 
-            perform_hover(driver, e)
-            perform_release(driver)
+            perform_hover(tdriver, e_outter)
+            perform_release(tdriver)
 
-            for e in driver.find_elements(By.TAG_NAME, "a"):
-                if e.text == "服务器/交易代理提升卡":
-                    e.click()
-                    perform_release(driver)
+            for e_inner in tdriver.find_elements(By.TAG_NAME, "a"):
+                if e_inner.text == "服务器/交易代理提升卡":
+                    e_inner.click()
+                    perform_release(tdriver)
 
                     print("Preparing for execution of topping...")
 
-                    perform_wait(driver)
+                    perform_wait(tdriver)
 
                     # get topper target button parent
-                    hbtn = driver.find_elements(By.ID, "hbtn_a_bump")
+                    hbtn = tdriver.find_elements(By.ID, "hbtn_a_bump")
 
                     # get purchase target button parent
-                    pbtn = driver.find_elements(By.ID, "magicform")
+                    pbtn = tdriver.find_elements(By.ID, "magicform")
 
                     if len(hbtn) == 1:
                         # Yeah, we have topper card currently!
@@ -82,11 +87,11 @@ def exec_top(driver: webdriver.Chrome):
 
                         # and then use the card
 
-                        perform_wait(driver)
+                        perform_wait(tdriver)
 
-                        ## driver.refresh()
+                        # driver.refresh()
 
-                        exec_top(driver)
+                        exec_top(tdriver)
                     else:
                         print("Internal Error")
 
@@ -94,25 +99,26 @@ def exec_top(driver: webdriver.Chrome):
 
 
 # quit Selenium
-def end(driver):
-    driver.quit()
+def end(tdriver):
+    tdriver.quit()
 
 
 if __name__ == "__main__":
     if not bool(getattr(sys, "ps1", sys.flags.interactive)):
         try:
-            dont_use_x = os.environ["BBSTOPER_NOT_USE_X"] == 1
+            dont_use_x = os.environ["BBSTOPER_NOT_USE_X"] == "1"
         except KeyError:
             dont_use_x = False
             pass
 
+        vd = Xvfb()
         if dont_use_x:
-            vd = Xvfb()
             vd.start()
 
         driver = init()
         login(driver)
         exec_top(driver)
         end(driver)
+
         if dont_use_x:
             vd.stop()
