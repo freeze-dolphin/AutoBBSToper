@@ -15,7 +15,13 @@ $ make interactive # run in interactive mode, useful for obtain cookies
 If you are on Windows, firstly set env-var `BBSTOPER_NOT_LOADIMAGE` to `1` and then run the script by:
 
 ```shell
-$ python -i main.py
+python main.py
+```
+
+If you want to get access to the interactive, use the one below:
+
+```shell
+python -i main.py
 ```
 
 ## Preparation
@@ -35,13 +41,14 @@ If there is any problem encountered during topping, the program will exit with n
 
 Judging from the return value might be useful for your writing automation scripts.
 
-The following pwsh is an example:
+The following powershell is an example:
 
 ```powershell
 do
 {
-  $proc = Start-Process python3.exe -ArgumentList "main.py" -Wait -PassThru
+    $proc = Start-Process python3.exe -ArgumentList "main.py" -Wait -PassThru
 } while ($proc.ExitCode ! = 0)
 ```
 
-Consider the script above, maybe you need to replace `python3.exe` to the exact absolute path to python executable, also remember to keep the working dir to the repository that you clone.
+Consider the script above, maybe you need to replace `python3.exe` to the exact absolute path to python executable, also
+remember to keep the working dir to the repository that you clone.
