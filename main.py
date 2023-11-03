@@ -7,12 +7,11 @@ from xvfbwrapper import Xvfb
 from utils import *
 
 
-def init(loadimage: bool = False):
+def init(loadimage: bool = True, xvfb: bool = False):
     options = webdriver.ChromeOptions()
 
     # images are not loaded by default because they would affect browser scroll
     if not loadimage:
-        # prefs = {}
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
     options.add_experimental_option("detach", True)
@@ -20,7 +19,7 @@ def init(loadimage: bool = False):
     options.add_argument(
         "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
 
-    if not loadimage:
+    if xvfb:
         options.add_argument(
             "window-size=19200,10800")
 
@@ -37,14 +36,14 @@ def save(tdriver):
 
 
 # login with current cookie
-def login(driver):
+def login(tdriver):
     cookies = pickle.load(open("cookies.pkl", "rb"))
     for ck in cookies:
         if ck["name"] == "ZxYQ_8cea_st_p":
             print("Login for uid: " + ck["value"].split("%")[0])
-        driver.add_cookie(ck)
+        tdriver.add_cookie(ck)
 
-    driver.refresh()
+    tdriver.refresh()
 
 
 def exec_top(tdriver: webdriver.Chrome):
@@ -115,7 +114,7 @@ if __name__ == "__main__":
         if dont_use_x:
             vd.start()
 
-        driver = init()
+        driver = init(loadimage=not dont_use_x, xvfb=dont_use_x)
         login(driver)
         exec_top(driver)
         end(driver)
