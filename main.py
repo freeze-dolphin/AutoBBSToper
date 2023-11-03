@@ -19,14 +19,15 @@ def init(loadimage: bool = True, xvfb: bool = False):
     options.add_argument(
         "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
 
-    if xvfb:
-        options.add_argument(
-            "window-size=19200,10800")
-
     tdriver = webdriver.Chrome(options=options)
 
     tdriver.get("https://www.mcbbs.net/thread-1391052-1-1.html")
     tdriver.maximize_window()
+
+    if xvfb:
+        # options.add_argument("window-size=19200,10800")
+        tdriver.execute_script("document.body.style.zoom='1.5'")
+
     return tdriver
 
 
@@ -73,6 +74,8 @@ def exec_top(tdriver: webdriver.Chrome):
 
                     # get purchase target button parent
                     pbtn = tdriver.find_elements(By.ID, "magicform")
+
+                    perform_wait(tdriver)
 
                     if len(hbtn) == 1:
                         # Yeah, we have topper card currently!
