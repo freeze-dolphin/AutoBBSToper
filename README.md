@@ -9,7 +9,7 @@ $ make exec # top the thread
 ```
 
 ```shell
-$ make interactive # run in interactive mode, useful for obtain cookies
+$ make interactive # run in interactive mode, useful to obtain cookies
 ```
 
 If you are on Windows, firstly set env-var `BBSTOPER_NOT_LOADIMAGE` to `1` and then run the script by:
