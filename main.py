@@ -2,12 +2,10 @@ import os
 import pickle
 import sys
 
-from xvfbwrapper import Xvfb
-
 from utils import *
 
 
-def init(loadimage: bool = True, xvfb: bool = False):
+def init(loadimage: bool = True):
     options = webdriver.ChromeOptions()
 
     # images are not loaded by default because they would affect browser scroll
@@ -23,10 +21,6 @@ def init(loadimage: bool = True, xvfb: bool = False):
 
     tdriver.get("https://www.mcbbs.net/thread-1391052-1-1.html")
     tdriver.maximize_window()
-
-    if xvfb:
-        # options.add_argument("window-size=19200,10800")
-        tdriver.execute_script("document.body.style.zoom='1.5'")
 
     return tdriver
 
@@ -47,7 +41,12 @@ def login(tdriver):
     tdriver.refresh()
 
 
+succ = 0
+mode = 0
+
+
 def exec_top(tdriver: webdriver.Chrome):
+    global succ, mode
     print("Preparing for click...")
 
     for e_outter in tdriver.find_elements(By.CLASS_NAME, "showmenu"):
@@ -81,6 +80,7 @@ def exec_top(tdriver: webdriver.Chrome):
                         # Yeah, we have topper card currently!
 
                         use_card(hbtn)
+
                     elif len(pbtn) == 1:
                         # Sorry, but you dont own any topper card!
                         # So we gonna purchase some...
@@ -93,11 +93,15 @@ def exec_top(tdriver: webdriver.Chrome):
 
                         # driver.refresh()
 
+                        mode = 1
+
                         exec_top(tdriver)
                     else:
-                        print("Internal Error")
+                        eprint("Internal Error")
+                        sys.exit(2)
 
-    print("Done")
+    succ += 1
+    print(f"Done [{succ} / {mode + 1}]")
 
 
 # quit Selenium
@@ -108,19 +112,17 @@ def end(tdriver):
 if __name__ == "__main__":
     if not bool(getattr(sys, "ps1", sys.flags.interactive)):
         try:
-            dont_use_x = os.environ["BBSTOPER_NOT_USE_X"] == "1"
+            dont_use_x = os.environ["BBSTOPER_NOT_LOADIMAGE"] == "1"
         except KeyError:
             dont_use_x = False
             pass
 
-        vd = Xvfb()
-        if dont_use_x:
-            vd.start()
-
-        driver = init(loadimage=not dont_use_x, xvfb=dont_use_x)
+        driver = init(loadimage=not dont_use_x)
         login(driver)
         exec_top(driver)
         end(driver)
-
-        if dont_use_x:
-            vd.stop()
+        if succ != mode + 1:
+            eprint("Target missed, please try again")
+            sys.exit(1)
+        else:
+            sys.exit(0)

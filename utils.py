@@ -1,3 +1,5 @@
+import sys
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -39,7 +41,11 @@ def purchase_card(pbtn):
             # get target button text
             desc = tgbt[0].find_elements(By.TAG_NAME, "span")
 
-            print("About to perform action: " + desc[0].text)
+            print("Being about to perform action: " + desc[0].text)
 
             # purchase
             tgbt[0].click()
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)

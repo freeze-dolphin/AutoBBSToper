@@ -6,7 +6,7 @@ unproxy:
 	unset ALL_PROXY
 
 interactive: unproxy
-	python3 -i main.py
+	BBSTOPER_NOT_LOADIMAGE=0 python3 -i main.py
 
 exec: unproxy
-	BBSTOPER_NOT_USE_X=1 python3 main.py
+	BBSTOPER_NOT_LOADIMAGE=1 python3 main.py
