@@ -1,11 +1,10 @@
 import os
 import pickle
-import sys
 
 from utils import *
 
 
-def init(loadimage: bool = True):
+def init(loadimage: bool = True, headless: bool = False):
     options = webdriver.ChromeOptions()
 
     # images are not loaded by default because they would affect browser scroll
@@ -16,6 +15,12 @@ def init(loadimage: bool = True):
 
     options.add_argument(
         "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
+
+    if headless:
+        options.add_argument('--headless')
+        # options.add_argument('--no-sandbox')
+        # options.add_argument('--disable-gpu')
+        # options.add_argument('--disable-dev-shm-usage')
 
     tdriver = webdriver.Chrome(options=options)
 
@@ -111,13 +116,23 @@ def end(tdriver):
 
 if __name__ == "__main__":
     if not bool(getattr(sys, "ps1", sys.flags.interactive)):
+        is_headless = False
+        no_image = False
+
         try:
-            dont_use_x = os.environ["BBSTOPER_NOT_LOADIMAGE"] == "1"
+            env = os.environ["BBSTOPER_HEADLESS"]
+            if env == "1":
+                is_headless = True
+                no_image = True
+            elif env == "2":
+                is_headless = False
+                no_image = True
         except KeyError:
-            dont_use_x = False
+            is_headless = False
+            no_image = False
             pass
 
-        driver = init(loadimage=not dont_use_x)
+        driver = init(loadimage=not no_image, headless=is_headless)
         login(driver)
         exec_top(driver)
         end(driver)

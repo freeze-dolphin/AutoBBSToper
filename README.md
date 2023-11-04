@@ -5,20 +5,22 @@ A Selenium script that top your server thread.
 ## Usage
 
 ```shell
-$ make exec # top the thread
+$ make auto # top the thread
 ```
 
 ```shell
 $ make interactive # run in interactive mode, useful to obtain cookies
 ```
 
-If you are on Windows, firstly set env-var `BBSTOPER_NOT_LOADIMAGE` to `1` and then run the script by:
+### For Windows Users
+
+If you are on Windows, firstly set env-var `BBSTOPER_HEADLESS` to `2` and then run the script by:
 
 ```shell
 python main.py
 ```
 
-If you want to get access to the interactive, use the one below:
+As for the interactive, use the one below:
 
 ```shell
 python -i main.py
@@ -44,6 +46,7 @@ Judging from the return value might be useful for your writing automation script
 The following powershell is an example:
 
 ```powershell
+$Env:BBSTOPER_HEADLESS = '2'
 do
 {
     $proc = Start-Process python3.exe -ArgumentList "main.py" -Wait -PassThru
